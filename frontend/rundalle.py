@@ -87,9 +87,9 @@ def draw_text_desc(im, brand, name, price):
   fontpath = "Biospace.ttf"     
   font = ImageFont.truetype(fontpath, text_size)
   draw = ImageDraw.Draw(image)
-  draw.text((text_x, text_y + text_size),  brand, font = font, fill = ft_color(image, text_x, text_y + text_size))
-  draw.text((text_x, text_y + 2 * text_size + 20),  name, font = font, fill = ft_color(image, text_x, text_y + 2 * text_size + 20))
-  draw.text((text_x * 9, text_y + 35),  price, font = font, fill = ft_color(image, text_x * 9, text_y + 35))
+  draw.text((text_x, text_y + text_size),  brand, font = font, fill = (0, 0, 0))
+  draw.text((text_x, text_y + 2 * text_size + 20),  name, font = font, fill = (0, 0, 0))
+  draw.text((text_x * 9, text_y + 35),  price, font = font, fill = (0, 0, 0))
   return image
 
 def cvt_to_png(img_path, out_path):
@@ -108,7 +108,7 @@ def generate_ai(path, prompt, brand, name, price):
   fp_mask = generate_file_path('in_images', img_id, '.png', True)
 
   cvt_to_png(path, fp)
-  generate_mask_img_v2(path, fp_mask)
+  generate_mask_img(path, fp_mask)
 
   response = client.images.edit(
     model="dall-e-2",
@@ -138,6 +138,3 @@ def generate_ai(path, prompt, brand, name, price):
 
 
   return b64_img.decode('UTF-8')
-
-
-# generate_ai('ath-earbuds-r.jpeg', 'A table with books and office appliances containing a earbuds.', 'Audio Technica', 'ATH-M50', 'Rp8.499.000')
