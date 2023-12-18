@@ -11,7 +11,7 @@ import uuid
 import base64
 
 
-API_KEY = "put-your-api-key-here"
+API_KEY = "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"
 if (os.getenv("OPENAI_API_KEY") is not None):
   API_KEY = os.getenv("OPENAI_API_KEY")
 
@@ -97,7 +97,7 @@ def cvt_to_png(img_path, out_path):
   jpeg_image.save(out_path, format='PNG')
 
 def generate_file_path(folder, img_name, ext, mask=False):
-  path = folder + '/' + img_name
+  path = img_name
   if mask:
     return path + '_mask' + ext
   return path + ext

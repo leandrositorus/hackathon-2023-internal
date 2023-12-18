@@ -3,7 +3,7 @@ import os
 # sys.path.append("..")
 
 from flask import Flask, render_template, request, jsonify, url_for
-from run_dalle import generate_ai
+from rundalle import generate_ai
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'target/uploads'
@@ -26,13 +26,14 @@ def processor():
         description = request.form['description']
         price = request.form['price']
         option_value = request.form['options']
-
+        
+        result = None
         if image_file:
             filename = os.path.join(app.config['UPLOAD_FOLDER'], image_file.filename)
             image_file.save(filename)
-
-        # result = generate_ai(filename, prompt_text, product_name, description, price)
-        result = "5aa59a2b-aeed-4420-b2cf-edcb15025f52-final.png"
+            result = generate_ai(filename, prompt_text, product_name, description, price)
+        
+        # result = "5aa59a2b-aeed-4420-b2cf-edcb15025f52-final.png"
 
         # Process the form data as needed
         # For now, just printing the values
@@ -53,7 +54,7 @@ def processor():
                 'description': description,
                 'price': price,
                 'option_value': option_value,
-                'file_path': url_for("", filename=result)
+                'base64': "data:image/jpeg;base64," + result
             }
         }
 
