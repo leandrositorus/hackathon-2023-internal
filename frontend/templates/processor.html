@@ -124,25 +124,25 @@
                     imageList.innerHTML = '';
 
                     imageData = [
-                      { url: data.file_path, name: data.image_file }
+                      { url: data.data.base64, name: data.data.image_file }
                     ]
 
                     // Add new list items based on the submitted data
-                    imageData.forEach(function (data) {
+                    imageData.forEach(function (item) {
                         var listItem = document.createElement("li");
                         listItem.classList.add("image-item");
 
                         var previewImage = document.createElement("img");
-                        previewImage.src = data.url;
-                        previewImage.alt = data.name;
-                        previewImage.style.maxWidth = '100px';
+                        previewImage.src = item.url;
+                        previewImage.alt = item.name;
+                        previewImage.style.maxWidth = '1000px';
 
                         var downloadButton = document.createElement("button");
                         downloadButton.classList.add("download-button");
                         downloadButton.innerText = "Download";
                         downloadButton.addEventListener("click", function () {
                             // Add logic to handle download (e.g., open a new window with the image)
-                            window.open(data.url, '_blank');
+                            window.open(item.url, '_blank');
                         });
 
                         listItem.appendChild(previewImage);

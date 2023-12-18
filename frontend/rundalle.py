@@ -5,12 +5,13 @@ import tempfile
 from PIL import Image, ImageDraw, ImageFont
 import shutil
 import os
-import io
+from io import BytesIO
 import requests
 import uuid
+import base64
 
 
-API_KEY = "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"
+API_KEY = "put-your-api-key-here"
 if (os.getenv("OPENAI_API_KEY") is not None):
   API_KEY = os.getenv("OPENAI_API_KEY")
 
@@ -25,6 +26,32 @@ def generate_mask_img(in_img, out_path):
 
   rgba[mask != 0] = [0, 0, 0, 0]
   cv2.imwrite(out_path, rgba)
+
+
+def generate_mask_img_v2(in_img, out_path):
+      # Read the input image
+    input_image = cv2.imread(in_img)
+ 
+    # Create a mask initialized with zeros
+    mask = np.zeros(input_image.shape[:2], np.uint8)
+ 
+    # Define a rectangle around the region of interest (ROI) in the image
+    rect = (10, 10, input_image.shape[1]-10, input_image.shape[0]-10)
+ 
+    # Initialize the background and foreground models for GrabCut
+    bgd_model = np.zeros((1, 65), np.float64)
+    fgd_model = np.zeros((1, 65), np.float64)
+ 
+    # Apply GrabCut algorithm
+    cv2.grabCut(input_image, mask, rect, bgd_model, fgd_model, 5, cv2.GC_INIT_WITH_RECT)
+ 
+    # Modify the mask to create a binary mask for the foreground
+    mask2 = np.where((mask == 2) | (mask == 0), 0, 255).astype('uint8')
+ 
+    input_image = cv2.cvtColor(input_image, cv2.COLOR_RGB2RGBA)
+    # Bitwise AND the input image with the binary mask to get the foreground
+    foreground_image = cv2.bitwise_and(input_image, input_image, mask=mask2)
+    cv2.imwrite(out_path, foreground_image)
 
 def ft_color(im, x, y):
   width, height = im.size
@@ -45,9 +72,9 @@ def ft_color(im, x, y):
   white_threshold = 200  # Adjust as needed
 
   if average_intensity < black_threshold:
-    return (0, 0, 0)
+    return (255, 255, 255)
   elif average_intensity > white_threshold:
-     return (255, 255, 255)
+     return (0, 0, 0)
   else:
     return (0, 0, 0)
 
@@ -67,10 +94,10 @@ def draw_text_desc(im, brand, name, price):
 
 def cvt_to_png(img_path, out_path):
   jpeg_image = Image.open(img_path)
-  jpeg_image.save(out_path)
+  jpeg_image.save(out_path, format='PNG')
 
 def generate_file_path(folder, img_name, ext, mask=False):
-  path = img_name
+  path = folder + '/' + img_name
   if mask:
     return path + '_mask' + ext
   return path + ext
@@ -81,7 +108,7 @@ def generate_ai(path, prompt, brand, name, price):
   fp_mask = generate_file_path('in_images', img_id, '.png', True)
 
   cvt_to_png(path, fp)
-  generate_mask_img(path, fp_mask)
+  generate_mask_img_v2(path, fp_mask)
 
   response = client.images.edit(
     model="dall-e-2",
@@ -92,7 +119,7 @@ def generate_ai(path, prompt, brand, name, price):
     size="1024x1024"
   )
 
-  print(response.data[0].url)
+  # print(response.data[0].url)
 
   response = requests.get(response.data[0].url, stream=True)
 
@@ -104,4 +131,13 @@ def generate_ai(path, prompt, brand, name, price):
   final = draw_text_desc(gen_img_path, brand, name, price)
   gen_img_path_final = generate_file_path('output_imgs', img_id + '-final', '.png')
   final.save(gen_img_path_final)
-  return gen_img_path_final
+
+  buffered = BytesIO()
+  final.save(buffered, format="PNG")
+  b64_img = base64.b64encode(buffered.getvalue())
+
+
+  return b64_img.decode('UTF-8')
+
+
+# generate_ai('ath-earbuds-r.jpeg', 'A table with books and office appliances containing a earbuds.', 'Audio Technica', 'ATH-M50', 'Rp8.499.000')
