@@ -25,7 +25,7 @@ def processor():
         product_name = request.form['product_name']
         description = request.form['description']
         price = request.form['price']
-        option_value = request.form['options']
+        # option_value = request.form['options']
         
         result = None
         if image_file:
@@ -42,7 +42,7 @@ def processor():
         print('Product Name:', product_name)
         print('Description:', description)
         print('Price:', price)
-        print('Option Value:', option_value)
+        # print('Option Value:', option_value)
 
         response_data = {
             'status': 'success',
@@ -53,7 +53,7 @@ def processor():
                 'product_name': product_name,
                 'description': description,
                 'price': price,
-                'option_value': option_value,
+                # 'option_value': option_value,
                 'base64': "data:image/jpeg;base64," + result
             }
         }
