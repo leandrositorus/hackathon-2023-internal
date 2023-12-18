@@ -10,7 +10,7 @@ import requests
 import uuid
 
 
-API_KEY = "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"
+API_KEY = "put-your-api-key-here"
 if (os.getenv("OPENAI_API_KEY") is not None):
   API_KEY = os.getenv("OPENAI_API_KEY")
 
