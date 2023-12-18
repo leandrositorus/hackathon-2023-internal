@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processor Page</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #preview {
+            max-width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Processor Page</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <label for="input_picture">Input Picture (Image only):</label>
+        <input type="file" id="input_picture" name="input_picture" accept="image/*" onchange="previewImage(this)">
+        <img id="preview" alt="Preview Image">
+
+        <label for="prompt">Prompt:</label>
+        <textarea id="prompt" name="prompt" rows="4" cols="50"></textarea>
+
+        <label for="product_name">Product Name:</label>
+        <input type="text" id="product_name" name="product_name">
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description">
+
+        <label for="price">Price:</label>
+        <input type="text" id="price" name="price">
+
+        <label for="options">Generate Number:</label>
+        <select id="options" name="options">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+
+        <br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div class="output">
+      <h2>Output</h2>
+      <ul class="image-list">
+          <!-- Add list items dynamically after form submission -->
+      </ul>
+    </div>
+
+    <script>
+        function previewImage(input) {
+            var preview = document.getElementById('preview');
+            preview.src = URL.createObjectURL(input.files[0]);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var form = document.querySelector("form");
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                // Serialize form data
+                var formData = new FormData(form);
+
+                // Send a POST request to the server
+                fetch('/processor', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data
+                    console.log(data);
+
+                    // Add logic to update UI based on the response
+                    // For example, update the image list dynamically
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+                // Add logic to handle form submission (send data to the server if needed)
+
+                // For demonstration purposes, add dummy data (replace this with actual data)
+                var imageData = [
+                    { url: "path/to/image1.jpg", name: "Image 1" },
+                    { url: "path/to/image2.jpg", name: "Image 2" },
+                    { url: "path/to/image3.jpg", name: "Image 3" }
+                ];
+
+                // Clear existing list items
+                var imageList = document.querySelector(".image-list");
+                imageList.innerHTML = '';
+
+                // Add new list items based on the submitted data
+                imageData.forEach(function (data) {
+                    var listItem = document.createElement("li");
+                    listItem.classList.add("image-item");
+
+                    var previewImage = document.createElement("img");
+                    previewImage.src = data.url;
+                    previewImage.alt = data.name;
+                    previewImage.style.maxWidth = '100px';
+
+                    var downloadButton = document.createElement("button");
+                    downloadButton.classList.add("download-button");
+                    downloadButton.innerText = "Download";
+                    downloadButton.addEventListener("click", function () {
+                        // Add logic to handle download (e.g., open a new window with the image)
+                        window.open(data.url, '_blank');
+                    });
+
+                    listItem.appendChild(previewImage);
+                    listItem.appendChild(downloadButton);
+
+                    imageList.appendChild(listItem);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
