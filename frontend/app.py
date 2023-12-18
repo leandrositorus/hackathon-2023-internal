@@ -2,19 +2,15 @@ import sys
 import os
 # sys.path.append("..")
 
-from flask import Flask, render_template, request, jsonify
-from working_code.run_dalle import generate_ai
+from flask import Flask, render_template, request, jsonify, url_for
+from run_dalle import generate_ai
 
 app = Flask(__name__)
-UPLOAD_FOLDER = './uploads'
-TARGET_FOLDER = './targets'
+UPLOAD_FOLDER = 'target/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['TARGET_FOLDER'] = TARGET_FOLDER
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-if not os.path.exists(TARGET_FOLDER):
-    os.makedirs(TARGET_FOLDER)
 
 @app.route('/')
 def welcome():
@@ -36,6 +32,7 @@ def processor():
             image_file.save(filename)
 
         # result = generate_ai(filename, prompt_text, product_name, description, price)
+        result = "5aa59a2b-aeed-4420-b2cf-edcb15025f52-final.png"
 
         # Process the form data as needed
         # For now, just printing the values
@@ -56,6 +53,7 @@ def processor():
                 'description': description,
                 'price': price,
                 'option_value': option_value,
+                'file_path': url_for("", filename=result)
             }
         }
 

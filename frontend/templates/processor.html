@@ -114,9 +114,42 @@
                 .then(data => {
                     // Handle the response data
                     console.log(data);
+                    debugger
 
                     // Add logic to update UI based on the response
                     // For example, update the image list dynamically
+
+                    // Clear existing list items
+                    var imageList = document.querySelector(".image-list");
+                    imageList.innerHTML = '';
+
+                    imageData = [
+                      { url: data.file_path, name: data.image_file }
+                    ]
+
+                    // Add new list items based on the submitted data
+                    imageData.forEach(function (data) {
+                        var listItem = document.createElement("li");
+                        listItem.classList.add("image-item");
+
+                        var previewImage = document.createElement("img");
+                        previewImage.src = data.url;
+                        previewImage.alt = data.name;
+                        previewImage.style.maxWidth = '100px';
+
+                        var downloadButton = document.createElement("button");
+                        downloadButton.classList.add("download-button");
+                        downloadButton.innerText = "Download";
+                        downloadButton.addEventListener("click", function () {
+                            // Add logic to handle download (e.g., open a new window with the image)
+                            window.open(data.url, '_blank');
+                        });
+
+                        listItem.appendChild(previewImage);
+                        listItem.appendChild(downloadButton);
+
+                        imageList.appendChild(listItem);
+                    });
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -131,33 +164,33 @@
                     { url: "path/to/image3.jpg", name: "Image 3" }
                 ];
 
-                // Clear existing list items
-                var imageList = document.querySelector(".image-list");
-                imageList.innerHTML = '';
+                // // Clear existing list items
+                // var imageList = document.querySelector(".image-list");
+                // imageList.innerHTML = '';
 
-                // Add new list items based on the submitted data
-                imageData.forEach(function (data) {
-                    var listItem = document.createElement("li");
-                    listItem.classList.add("image-item");
+                // // Add new list items based on the submitted data
+                // imageData.forEach(function (data) {
+                //     var listItem = document.createElement("li");
+                //     listItem.classList.add("image-item");
 
-                    var previewImage = document.createElement("img");
-                    previewImage.src = data.url;
-                    previewImage.alt = data.name;
-                    previewImage.style.maxWidth = '100px';
+                //     var previewImage = document.createElement("img");
+                //     previewImage.src = data.url;
+                //     previewImage.alt = data.name;
+                //     previewImage.style.maxWidth = '100px';
 
-                    var downloadButton = document.createElement("button");
-                    downloadButton.classList.add("download-button");
-                    downloadButton.innerText = "Download";
-                    downloadButton.addEventListener("click", function () {
-                        // Add logic to handle download (e.g., open a new window with the image)
-                        window.open(data.url, '_blank');
-                    });
+                //     var downloadButton = document.createElement("button");
+                //     downloadButton.classList.add("download-button");
+                //     downloadButton.innerText = "Download";
+                //     downloadButton.addEventListener("click", function () {
+                //         // Add logic to handle download (e.g., open a new window with the image)
+                //         window.open(data.url, '_blank');
+                //     });
 
-                    listItem.appendChild(previewImage);
-                    listItem.appendChild(downloadButton);
+                //     listItem.appendChild(previewImage);
+                //     listItem.appendChild(downloadButton);
 
-                    imageList.appendChild(listItem);
-                });
+                //     imageList.appendChild(listItem);
+                // });
             });
         });
     </script>
