@@ -5,12 +5,13 @@ import tempfile
 from PIL import Image, ImageDraw, ImageFont
 import shutil
 import os
-import io
+from io import BytesIO
 import requests
 import uuid
+import base64
 
 
-API_KEY = "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"
+API_KEY = "put-your-api-key-here"
 if (os.getenv("OPENAI_API_KEY") is not None):
   API_KEY = os.getenv("OPENAI_API_KEY")
 
@@ -118,7 +119,7 @@ def generate_ai(path, prompt, brand, name, price):
     size="1024x1024"
   )
 
-  print(response.data[0].url)
+  # print(response.data[0].url)
 
   response = requests.get(response.data[0].url, stream=True)
 
@@ -130,7 +131,13 @@ def generate_ai(path, prompt, brand, name, price):
   final = draw_text_desc(gen_img_path, brand, name, price)
   gen_img_path_final = generate_file_path('output_imgs', img_id + '-final', '.png')
   final.save(gen_img_path_final)
-  return gen_img_path_final
+
+  buffered = BytesIO()
+  final.save(buffered, format="PNG")
+  b64_img = base64.b64encode(buffered.getvalue())
+
+
+  return b64_img.decode('UTF-8')
 
 
 # generate_ai('ath-earbuds-r.jpeg', 'A table with books and office appliances containing a earbuds.', 'Audio Technica', 'ATH-M50', 'Rp8.499.000')
