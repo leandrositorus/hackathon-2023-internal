@@ -5,3 +5,4 @@ matplotlib
 stability-sdk
 torch
 Pillow
+openai
